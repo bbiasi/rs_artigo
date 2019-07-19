@@ -37,5 +37,5 @@ df2 <- df %>%
 df3 <- rbind(df1, df2)
 
 df3 <- df3 %>% 
-  dplyr::filter (! duplicated(rowid))
+  dplyr::filter(! duplicated(rowid))
 
