@@ -40,9 +40,12 @@ library(dplyr)
 library(tibble)
 library(ggplot2)
 library(forcats)
+library(stringr)
+library(tidyr)
 
 Bahia <- FluxoResiduos %>% 
   tibble::rowid_to_column() %>% 
+  dplyr::mutate(origem_estado = stringr::str_sub(`UP025 - Municípios de origem dos resíduos`, start = -2)) %>% 
   dplyr::filter(Estado == "BA") %>% 
   dplyr::select(-c(`Código do Município`, Estado)) %>% 
   dplyr::rename("Domiciliar_urbano" = `UP007 - Quantidade de RDO e RPU recebida na unidade de processamento`,
@@ -64,7 +67,8 @@ Bahia <- FluxoResiduos %>%
                 Op_Unidade = as.factor(Op_Unidade),
                 Nome_und = as.factor(Nome_und),
                 Municipio_origem = as.factor(Municipio_origem),
-                Tipo_und = as.factor(Tipo_und)) %>%
+                Tipo_und = as.factor(Tipo_und),
+                origem_estado = as.factor(origem_estado)) %>%
   dplyr::mutate(Tipo_und = forcats::fct_recode(Tipo_und,
                                                att_rcc_vol = "Área de transb e triagem de RCC e volumosos (=ATT)",
                                                aterro = "Aterro controlado",
@@ -82,7 +86,24 @@ Bahia <- FluxoResiduos %>%
                                                  emp_priv  = "Empresa privada",
                                                  municipal = "Prefeitura ou SLU"))
 
+
+# QTD_receb_municpio_und_proc = soma de residuos
+
 levels(Bahia$Op_Unidade)
+levels(Bahia$origem_estado)
+
+table(Bahia$Ano)
+#  A partir de 2009 ha um amplo incremento de informacao.
+# Deste modo a analise sera focada a partir do ano de 2009.
+
+Bahia <- Bahia %>% 
+  dplyr::mutate(Ano = as.numeric(as.character(Ano))) %>% 
+  dplyr::filter(Ano >= 2009) %>% 
+  dplyr::mutate(Ano = as.factor(Ano))
+
+table(Bahia$Ano)
+table(Bahia$Tipo_und)
+table(Bahia$origem_estado)
 
 Bahia %>% 
   na.omit() %>% 
@@ -119,4 +140,29 @@ Alagoinhas %>%
            stat = "identity") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90))
+
+outros_estados <- Bahia %>% 
+  dplyr::filter(origem_estado != "BA") %>% 
+  replace(is.na(.), 0) %>% 
+  dplyr::filter(QTD_receb_municpio_und_proc > 0) %>% # remove petrolina
+  dplyr::select(Ano, Municipio, Nome_und, Saude, Industrial, Outros, 
+                Municipio_origem, Tipo_und, Op_Unidade) %>% 
+  tidyr::gather("residuo", "tonelada", -c(Ano, Municipio, Nome_und, Municipio_origem,
+                                          Tipo_und, Op_Unidade))
+
+outros_estados %>% 
+  ggplot2::ggplot() +
+  geom_bar(aes(x = Ano, y = tonelada, fill = residuo),
+           stat = "identity") +
+  theme_bw()
+
+outros_estados %>% 
+  ggplot2::ggplot() +
+  geom_bar(aes(x = Ano, y = tonelada, fill = residuo),
+           stat = "identity") +
+  facet_grid(Municipio~Municipio_origem) +
+  theme_bw()
+
+
+
 
