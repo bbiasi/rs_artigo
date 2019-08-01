@@ -21,4 +21,5 @@ df <- df %>%
 # View(df)
 
 # save ----
-write.table(df, file = "2016.txt", sep = "")
+library("xlsx")
+write.xlsx(df, file = "2016.xlsx")
