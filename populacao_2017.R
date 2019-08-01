@@ -21,4 +21,4 @@ df <- df %>%
 # View(df)
 
 # save ----
-write.table(df, file = "Pop_est_2017.txt", sep = "")
+write.table(df, file = "2017.txt", sep = "")
