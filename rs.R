@@ -167,7 +167,8 @@ outros_estados %>%
 # summary por municipio ----
 library(moments)
 
-Bahia_mod <- Bahia %>% 
+Bahia_mod <- Bahia %>%
+  na.omit() %>% 
   dplyr::group_by(Municipio) %>% 
   dplyr::summarise(
                    Domiciliar_urbano_m = mean(Domiciliar_urbano),
@@ -191,7 +192,8 @@ Bahia_mod <- Bahia %>%
                    Outros_s = moments::skewness(Outros),
                    poda_s   = moments::skewness(poda)
                    ) %>% 
-  na.omit()
+  replace(is.na(.), 0)
 
 # save ----
-write.table(Bahia_mod, file = "residuos.txt", sep = "")
+library("xlsx")
+write.xlsx(Bahia_mod, file = "residuos.xlsx")
