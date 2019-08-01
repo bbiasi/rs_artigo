@@ -165,6 +165,33 @@ outros_estados %>%
 
 
 # summary por municipio ----
+library(moments)
 
+Bahia_mod <- Bahia %>% 
+  dplyr::group_by(Municipio) %>% 
+  dplyr::summarise(
+                   Domiciliar_urbano_m = mean(Domiciliar_urbano),
+                   Saude_m = mean(Saude),
+                   Industrial_m  = mean(Industrial),
+                   Const_civil_m = mean(Const_civil),
+                   Outros_m = mean(Outros),
+                   poda_m   = mean(poda),
+                   
+                   Domiciliar_urbano_k = moments::kurtosis(Domiciliar_urbano),
+                   Saude_k = moments::kurtosis(Saude),
+                   Industrial_k  = moments::kurtosis(Industrial),
+                   Const_civil_k = moments::kurtosis(Const_civil),
+                   Outros_k = moments::kurtosis(Outros),
+                   poda_k   = moments::kurtosis(poda),
+                   
+                   Domiciliar_urbano_s = moments::skewness(Domiciliar_urbano),
+                   Saude_s = moments::skewness(Saude),
+                   Industrial_s  = moments::skewness(Industrial),
+                   Const_civil_s = moments::skewness(Const_civil),
+                   Outros_s = moments::skewness(Outros),
+                   poda_s   = moments::skewness(poda)
+                   ) %>% 
+  na.omit()
 
-
+# save ----
+write.table(Bahia_mod, file = "residuos.txt", sep = "")
