@@ -21,4 +21,5 @@ df <- df %>%
                 "pop_2010" = `População total`)
 
 # save ----
-write.table(df, file = "2010.txt", sep = "")
+library("xlsx")
+write.xlsx(df, file = "2010.xlsx")
