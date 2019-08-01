@@ -10,7 +10,7 @@ df <- pib_2016 %>%
   dplyr::slice(-1) %>% 
   dplyr::select(Municípios, 8)
 
-colnames(df) <- c("Municipios", "pib_pc_2016")
+colnames(df) <- c("Municipio", "pib_pc_2016")
 
 # save ----
 library("xlsx")
