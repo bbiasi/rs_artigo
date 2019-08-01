@@ -1,7 +1,7 @@
-setwd("D:/R/Project/Residuos_Solidos/30_06_19/rs_artigo/IBGE")
+setwd("D:/R/Project/Residuos_Solidos/30_06_19/rs_artigo")
 
 library(readxl)
-pop_2017 <- readxl::read_excel("estimativa_dou_2017.xlsx", 
+pop_2017 <- readxl::read_excel("D:/R/Project/Residuos_Solidos/30_06_19/rs_artigo/IBGE/estimativa_dou_2017.xlsx", 
                                sheet = "Municípios", skip = 1)
 
 
